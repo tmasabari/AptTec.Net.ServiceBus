@@ -5,6 +5,8 @@
   </PropertyGroup>
 	<PropertyGroup>
 		<LangVersion>latest</LangVersion>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+		
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.0" />
@@ -13,6 +15,9 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	  
+	<None Include="docs\readme.md" Pack="true" PackagePath="\"/>
+
   </ItemGroup>
 
   <ItemGroup>

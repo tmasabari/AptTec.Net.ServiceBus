@@ -16,7 +16,6 @@ namespace AzureServiceBus
 
         private string connectionString;
         private string topicName;
-        private string subscriptionName;
 
         public ServiceBusTopicCommand(ILoggerFactory loggerFactory, string connectionString, string topicName)
         {

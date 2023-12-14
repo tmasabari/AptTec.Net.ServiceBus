@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Azure.Messaging.ServiceBus;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Text.Json.Serialization;
+﻿using Azure.Messaging.ServiceBus;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
 using ServiceBus.Abstractions;
+using Microsoft.Azure.Amqp.Framing;
+using System;
 
-namespace AzureServiceBus
+namespace AptTec.NET.AzureServiceBus
 {
     /// <summary>
+    /// No need to worry about creating the pump
+    /// Auto-completion once the call back is successfully executed
+    /// Auto-extension of lock duration if operation is taking longer
+    /// Error handling-> move the message to dead letter queue in case of exception
+    /// Easy control over concurrency
     /// https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-how-to-use-topics-subscriptions?tabs=connection-string
     /// The Service Bus client types are safe to cache and use as a singleton for the lifetime
     /// of the application, which is best practice when messages are being published or read regularly.
@@ -34,9 +35,20 @@ namespace AzureServiceBus
                 throw new ArgumentNullException(nameof(logger));
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="topicName"></param>
+        /// <param name="subscriptionName"></param>
+        /// <param name="handleMessageFunction"></param>
+        /// <param name="MaxConcurrentCalls"></param>
+        /// <param name="MaxAutoLockRenewalDuration">The dafault value is Timeout.InfiniteTimeSpan</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public async Task SubscribeTopic(string connectionString, string topicName, string subscriptionName,
-                Func<T, Task> handleMessageFunction)
+                Func<T, Task> handleMessageFunction, int MaxConcurrentCalls =1, TimeSpan MaxAutoLockRenewalDuration = default)
         {
 
             if (string.IsNullOrEmpty(connectionString))
@@ -53,17 +65,20 @@ namespace AzureServiceBus
             {
                 throw new ArgumentException($"'{nameof(subscriptionName)}' cannot be null or empty.", nameof(subscriptionName));
             }
-
+            if (MaxAutoLockRenewalDuration == default)
+            {
+                MaxAutoLockRenewalDuration = Timeout.InfiniteTimeSpan; // TimeSpan.FromMinutes(10), //default value 5 minutes
+            }
             this.connectionString = connectionString;
             this.topicName = topicName;
             this.subscriptionName = subscriptionName;
             this.handleMessageFunction = handleMessageFunction ?? throw new ArgumentNullException(nameof(handleMessageFunction));
 
-            await Register();
+            await Register(MaxConcurrentCalls, MaxAutoLockRenewalDuration);
         }
 
 
-        private async Task Register()
+        private async Task Register(int MaxConcurrentCalls, TimeSpan MaxAutoLockRenewalDuration)
         {
             // Create a new Service Bus client
             var serviceBusClient = new ServiceBusClient(connectionString);
@@ -79,13 +94,13 @@ namespace AzureServiceBus
                 //the maximum duration for which the lock on a message can be automatically renewed.
                 //Longer lock renewal durations might lead to increased contention for messages, as the lock on a message is held for an extended period, potentially affecting the ability of other consumers to process messages.
                 //If one consumer holds a lock for an extended period, other consumers may be starved of the opportunity to process messages from the same subscription or queue.
-                MaxAutoLockRenewalDuration = Timeout.InfiniteTimeSpan, // TimeSpan.FromMinutes(10), //default value 5 minutes
+                MaxAutoLockRenewalDuration = MaxAutoLockRenewalDuration, 
 
                 // Maximum number of concurrent calls to the callback ProcessMessagesAsync (),
                 // If you have three instances of your message processor, and each instance
                 // is configured with MaxConcurrentCalls = 1, then each instance will fetch and process
                 // one message at a time.  the three instances will collectively handle up to three messages concurrently.
-                MaxConcurrentCalls = 1,
+                MaxConcurrentCalls = MaxConcurrentCalls,
 
                 //  the message handler triggers an exception and did not settle the message,
                 // then the message will be automatically abandoned, irrespective of AutoCompleteMessages
@@ -111,7 +126,8 @@ namespace AzureServiceBus
             try
             {
                 // Process the message here
-                logger.LogInformation($"Service bus message handler {this.topicName} received message: SequenceNumber:{message.SequenceNumber}"); // Body:{message.Body}
+                logger.LogInformation($"Service bus message handler {this.topicName} received message: SequenceNumber:{message.SequenceNumber}"); 
+                // Body:{message.Body}
                 // Convert the message body to the specified generic type
                 var messageBody = JsonConvert.DeserializeObject<T>(message.Body.ToString());
 

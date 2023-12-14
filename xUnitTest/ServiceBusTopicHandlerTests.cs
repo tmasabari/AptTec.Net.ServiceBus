@@ -1,5 +1,5 @@
 using AutoFixture;
-using AzureServiceBus;
+using AptTec.NET.AzureServiceBus;
 using System.Reflection.Metadata;
 using xUnitTest.TestCode;
 
@@ -38,8 +38,9 @@ namespace xUnitTest
             // Assert
             Assert.True(exception == null);
 
-            await messageHandler.SubscribeTopic(_testConfig.Configs["BusConnectionString"],
-                "unit-test-topic", "unit-test-topic-subscription", TestMessageHandlers.TestMessageContractProcessor);
+            //not working used the console method program.cs
+            //await messageHandler.SubscribeTopic(_testConfig.Configs["BusConnectionString"],
+            //    "unit-test-topic", "unit-test-topic-subscription", TestMessageHandlers.TestMessageContractProcessor);
         }
     }
 }

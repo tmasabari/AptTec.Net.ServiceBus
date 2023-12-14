@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureServiceBus", "AzureServiceBus\AzureServiceBus.csproj", "{328B542F-2F13-432D-881C-8B18148C0499}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AptTec.NET.AzureServiceBus", "AzureServiceBus\AptTec.NET.AzureServiceBus.csproj", "{328B542F-2F13-432D-881C-8B18148C0499}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xUnitTest", "xUnitTest\xUnitTest.csproj", "{6D17DEC1-CB65-4DA9-A44A-694552E33E73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBus.Abstractions", "ServiceBus.Abstractions\ServiceBus.Abstractions.csproj", "{8D956EA0-A772-47F0-8ACB-695ED86A73A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AptTec.NET.ServiceBus.Abstractions", "ServiceBus.Abstractions\AptTec.NET.ServiceBus.Abstractions.csproj", "{8D956EA0-A772-47F0-8ACB-695ED86A73A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release Scripts", "Release Scripts", "{CDC91153-3356-40B4-94CA-65876C58F1B8}"
+	ProjectSection(SolutionItems) = preProject
+		publish.cmd = publish.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

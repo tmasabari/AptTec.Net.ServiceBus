@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AutoFixture;
-using AzureServiceBus;
+using AptTec.NET.AzureServiceBus;
 using xUnitTest.TestCode;
 
 Console.WriteLine("Starting the console tester");

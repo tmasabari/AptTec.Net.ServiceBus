@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AzureServiceBus\AzureServiceBus.csproj" />
-    <ProjectReference Include="..\ServiceBus.Abstractions\ServiceBus.Abstractions.csproj" />
+    <ProjectReference Include="..\AzureServiceBus\AptTec.NET.AzureServiceBus.csproj" />
+    <ProjectReference Include="..\ServiceBus.Abstractions\AptTec.NET.ServiceBus.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

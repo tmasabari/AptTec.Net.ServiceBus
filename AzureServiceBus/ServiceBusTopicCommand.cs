@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AzureServiceBus
+namespace AptTec.NET.AzureServiceBus
 {
     public class ServiceBusTopicCommand<T> : IServiceBusTopicCommand<T> where T : class
     {
@@ -34,7 +34,7 @@ namespace AzureServiceBus
                 throw new ArgumentException($"'{nameof(topicName)}' cannot be null or empty.", nameof(topicName));
             }
 
-            this.logger = loggerFactory.CreateLogger<ServiceBusTopicHandler<T>>();
+            this.logger = loggerFactory.CreateLogger<ServiceBusTopicCommand<T>>();
             this.connectionString = connectionString;
             this.topicName = topicName;
         }
